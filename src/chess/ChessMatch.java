@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
+import chess.pieces.Bishop;
 import chess.pieces.King;
 import chess.pieces.Pawn;
 import chess.pieces.Rook;
@@ -29,16 +30,6 @@ public class ChessMatch {
 		initialSetup();
 	}
 
-	public ChessPiece[][] getPieces() {
-		ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
-		for (int i = 0; i < board.getRows(); i++) {
-			for (int j = 0; j < board.getColumns(); j++) {
-				mat[i][j] = (ChessPiece) board.piece(i, j);
-			}
-		}
-		return mat;
-	}
-
 	public int getTurn() {
 		return turn;
 	}
@@ -53,6 +44,16 @@ public class ChessMatch {
 
 	public boolean getCheckMate() {
 		return checkMate;
+	}
+
+	public ChessPiece[][] getPieces() {
+		ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
+		for (int i = 0; i < board.getRows(); i++) {
+			for (int j = 0; j < board.getColumns(); j++) {
+				mat[i][j] = (ChessPiece) board.piece(i, j);
+			}
+		}
+		return mat;
 	}
 
 	public boolean[][] possibleMoves(ChessPosition sourcePosition) {
@@ -77,8 +78,10 @@ public class ChessMatch {
 
 		if (testCheckMate(opponent(currentPlayer))) {
 			checkMate = true;
+		} else {
+			nextTurn();
 		}
-		nextTurn();
+
 		return (ChessPiece) capturedPiece;
 	}
 
@@ -90,8 +93,9 @@ public class ChessMatch {
 
 		if (capturedPiece != null) {
 			piecesOnTheBoard.remove(capturedPiece);
-			this.capturedPieces.add(capturedPiece);
+			capturedPieces.add(capturedPiece);
 		}
+
 		return capturedPiece;
 	}
 
@@ -115,13 +119,13 @@ public class ChessMatch {
 			throw new ChessException("The chosen piece is not yours");
 		}
 		if (!board.piece(position).isThereAnyPossibleMove()) {
-			throw new ChessException("There is no possible moves for the chose piece");
+			throw new ChessException("There is no possible moves for the chosen piece");
 		}
 	}
 
 	private void validateTargetPosition(Position source, Position target) {
 		if (!board.piece(source).possibleMove(target)) {
-			throw new ChessException("The chosen piece can't move target position");
+			throw new ChessException("The chosen piece can't move to target position");
 		}
 	}
 
@@ -191,7 +195,9 @@ public class ChessMatch {
 
 	private void initialSetup() {
 		placeNewPiece('a', 1, new Rook(board, Color.WHITE));
+		placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('e', 1, new King(board, Color.WHITE));
+		placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('h', 1, new Rook(board, Color.WHITE));
 		placeNewPiece('a', 2, new Pawn(board, Color.WHITE));
 		placeNewPiece('b', 2, new Pawn(board, Color.WHITE));
@@ -203,7 +209,9 @@ public class ChessMatch {
 		placeNewPiece('h', 2, new Pawn(board, Color.WHITE));
 
 		placeNewPiece('a', 8, new Rook(board, Color.BLACK));
+		placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
 		placeNewPiece('e', 8, new King(board, Color.BLACK));
+		placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
 		placeNewPiece('h', 8, new Rook(board, Color.BLACK));
 		placeNewPiece('a', 7, new Pawn(board, Color.BLACK));
 		placeNewPiece('b', 7, new Pawn(board, Color.BLACK));
